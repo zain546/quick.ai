@@ -1,5 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { assets } from "../assets/assets";
+import CompanyLogoMarquee from "./CompanyLogoMarquee";
 const Hero = () => {
   const navigate = useNavigate();
   return (
@@ -31,6 +32,10 @@ const Hero = () => {
       <div className="flex items-center gap-4 mt-8 mx-auto text-gray-600">
         <img src={assets.user_group} alt="" className="h-8" /> Trusted by 10k+
         people
+      </div>
+      {/* CompanyLogoMarquee */}
+      <div>
+        <CompanyLogoMarquee/>
       </div>
     </div>
   );

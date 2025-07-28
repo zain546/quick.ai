@@ -2,10 +2,24 @@
 
 @import "tailwindcss";
 
-*{
-  font-family: 'Outfit', sans-serif;  
+* {
+  font-family: "Outfit", sans-serif;
 }
 
-@theme{
-  --color-primary: #5044E5;
+@theme {
+  --color-primary: #5044e5;
+}
+
+.marquee-inner {
+  animation: marqueeScroll linear infinite;
+}
+
+@keyframes marqueeScroll {
+  0% {
+    transform: translateX(0%);
+  }
+
+  100% {
+    transform: translateX(-50%);
+  }
 }
