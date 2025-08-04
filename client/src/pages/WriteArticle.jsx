@@ -50,7 +50,7 @@ const WriteArticle = () => {
         </div>
         <br />
         <button className="w-full flex justify-center items-center gap-2 bg-gradient-to-r from-[#226BFF] to-[#65ADFF] text-white px-4 py-2 mt-6 text-sm cursor-pointer rounded-md">
-          <Edit className="w-6 text-[#4A7AFF]" />
+          <Edit className="w-5" />
           Generate Article
         </button>
       </form>
@@ -62,7 +62,7 @@ const WriteArticle = () => {
         </div>
 
         <div className="flex-1 flex justify-center items-center">
-          <div className="text-sm flex flex-col items-center gap-5 text-gray-400 text-center">
+          <div className="text-sm flex flex-col items-center gap-5 text-gray-400">
             <Edit className="w-9 h-9" />
             <p>Enter a topic and click “Generate Article” to get started.</p>
           </div>

@@ -56,7 +56,7 @@ const BlogTitles = () => {
         </div>
         <br />
         <button className="w-full flex justify-center items-center gap-2 bg-gradient-to-r from-[#C341F6] to-[#8E37EB] text-white px-4 py-2 mt-6 text-sm cursor-pointer rounded-md">
-          <Hash className="w-6 text-[#4A7AFF]" />
+          <Hash className="w-5" />
           Generate Title
         </button>
       </form>
@@ -68,7 +68,7 @@ const BlogTitles = () => {
         </div>
 
         <div className="flex-1 flex justify-center items-center">
-          <div className="text-sm flex flex-col items-center gap-5 text-gray-400 text-center">
+          <div className="text-sm flex flex-col items-center gap-5 text-gray-400">
             <Hash className="w-9 h-9" />
             <p>Enter a topic and click “Generate Title" to get started.</p>
           </div>
