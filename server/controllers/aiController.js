@@ -2,6 +2,7 @@ import OpenAI from "openai";
 import sql from "../configs/db.js";
 import { clerkClient } from "@clerk/express";
 import axios from "axios";
+import { v2 as cloudinary } from 'cloudinary';
 
 const AI = new OpenAI({
   apiKey: process.env.GEMINI_API_KEY,
@@ -11,11 +12,11 @@ const AI = new OpenAI({
 export const generateArticle = async (req, res) => {
   try {
     // Get authentication data using req.auth() since we're using requireAuth()
-    const { userId } = req.auth();
+    const { userId } = await req.auth();
     if (!userId) {
       return res.status(401).json({ message: "User ID not found" });
     }
-
+    
     const { prompt, length } = req.body;
     if (!prompt || !length) {
       return res.status(400).json({
@@ -24,13 +25,10 @@ export const generateArticle = async (req, res) => {
     }
 
     // Check user's plan and usage
-    const user = await clerkClient.users.getUser(userId);
-    const hasPremiumPlan = user.publicMetadata.plan === "premium";
-    const free_usage = user.privateMetadata.free_usage || 0;
-
-    if (!hasPremiumPlan && free_usage >= 10) {
+    const plan = await req.plan;
+    const free_usage = await req.free_usage;
+    if (plan !== "premium" && free_usage >= 10) {
       return res.status(403).json({
-        success: false,
         message:
           "You have reached your free usage limit, upgrade to premium to continue",
       });
@@ -48,34 +46,34 @@ export const generateArticle = async (req, res) => {
       max_tokens: length,
     });
     const content = response.choices[0].message.content;
-
+    
     // Save to database
     await sql`INSERT INTO creations (user_id, prompt, content, type) VALUES (${userId}, ${prompt}, ${content}, 'article')`;
-
+    
     // Track usage for free users
-    if (!hasPremiumPlan) {
+    if (plan !== "premium") {
       await clerkClient.users.updateUserMetadata(userId, {
         privateMetadata: {
           free_usage: free_usage + 1,
         },
       });
     }
-
+    
     res.json({
       success: true,
       message: "Article generated successfully",
       content,
       prompt,
       length,
-      free_usage: !hasPremiumPlan ? free_usage + 1 : free_usage,
+      free_usage: plan !== "premium" ? free_usage + 1 : free_usage,
     });
   } catch (error) {
-    console.error("Error in generateArticle:", error);
+    console.error('Error in generateArticle:', error);
     // Provide a proper status code
     const statusCode = error.status || 500;
-    res.status(statusCode).json({
+    res.status(statusCode).json({ 
       message: error.message,
-      error: error.toString(),
+      error: error.toString()
     });
   }
 };
@@ -83,7 +81,7 @@ export const generateArticle = async (req, res) => {
 export const generateBlogTitle = async (req, res) => {
   try {
     // Get authentication data using req.auth() since we're using requireAuth()
-    const { userId } = req.auth();
+    const { userId } = await req.auth();
     if (!userId) {
       return res.status(401).json({ message: "User ID not found" });
     }
@@ -96,11 +94,10 @@ export const generateBlogTitle = async (req, res) => {
     }
 
     // Check user's plan and usage
-    const user = await clerkClient.users.getUser(userId);
-    const hasPremiumPlan = user.publicMetadata.plan === "premium";
-    const free_usage = user.privateMetadata.free_usage || 0;
+    const plan = await req.plan;
+    const free_usage = await req.free_usage;
 
-    if (!hasPremiumPlan && free_usage >= 10) {
+    if (plan !== "premium" && free_usage >= 10) {
       return res.status(403).json({
         success: false,
         message:
@@ -125,7 +122,7 @@ export const generateBlogTitle = async (req, res) => {
     await sql`INSERT INTO creations (user_id, prompt, content, type) VALUES (${userId}, ${prompt}, ${content}, 'blog-title')`;
 
     // Track usage for free users
-    if (!hasPremiumPlan) {
+    if (plan !== "premium") {
       await clerkClient.users.updateUserMetadata(userId, {
         privateMetadata: {
           free_usage: free_usage + 1,
@@ -138,10 +135,10 @@ export const generateBlogTitle = async (req, res) => {
       message: "Blog title generated successfully",
       content,
       prompt,
-      free_usage: !hasPremiumPlan ? free_usage + 1 : free_usage,
+      free_usage: plan !== "premium" ? free_usage + 1 : free_usage,
     });
   } catch (error) {
-    console.error("Error in generateArticle:", error);
+    console.error("Error in generateBlogTitle:", error);
     // Provide a proper status code
     const statusCode = error.status || 500;
     res.status(statusCode).json({
@@ -154,7 +151,7 @@ export const generateBlogTitle = async (req, res) => {
 export const generateImage = async (req, res) => {
   try {
     // Get authentication data using req.auth() since we're using requireAuth()
-    const { userId } = req.auth();
+    const { userId } = await req.auth();
     if (!userId) {
       return res.status(401).json({ message: "User ID not found" });
     }
@@ -167,50 +164,60 @@ export const generateImage = async (req, res) => {
     }
 
     // Check user's plan and usage
-    const user = await clerkClient.users.getUser(userId);
-    const hasPremiumPlan = user.publicMetadata.plan === "premium";
-    const free_usage = user.privateMetadata.free_usage || 0;
+    const plan = await req.plan;
+    const free_usage = await req.free_usage;
 
-    if (!hasPremiumPlan) {
+    if (plan !== "premium") {
       return res.status(403).json({
         success: false,
         message:
           "This feature is only available for premium users, upgrade to premium to continue",
       });
     }
-    const formData = new FormData()
-    formData.append('prompt', prompt)
-    const {data} = await axios.post('https://clipdrop-api.co/text-to-image/v1',formData,{
-      headers: {
-        'x-api-key': `${process.env.CLIPDROP_API_KEY}`,
-        responseType: 'arraybuffer'
-      }
-    })
-    const base64Image = `data:image/png;base64,${Buffer.from(data, 'binary').toString('base64')}`;
-    const imageUrl = await uploadImage(base64Image);
 
-    // Save to database
-    await sql`INSERT INTO creations (user_id, prompt, content, type) VALUES (${userId}, ${prompt}, ${content}, 'blog-title')`;
-
-    // Track usage for free users
-    if (!hasPremiumPlan) {
-      await clerkClient.users.updateUserMetadata(userId, {
-        privateMetadata: {
-          free_usage: free_usage + 1,
+    try {
+      const formData = new FormData();
+      formData.append('prompt', prompt);
+      
+      const { data } = await axios.post('https://clipdrop-api.co/text-to-image/v1', formData, {
+        headers: {
+          'x-api-key': process.env.CLIPDROP_API_KEY,
         },
+        responseType: 'arraybuffer'
+      });
+
+      if (!data || data.byteLength === 0) {
+        throw new Error('No image data received from ClipDrop API');
+      }
+
+      const base64Image = `data:image/png;base64,${Buffer.from(data, 'binary').toString('base64')}`;
+      
+      // Upload to Cloudinary
+      const uploadResult = await cloudinary.uploader.upload(base64Image, {
+        folder: 'ai-generated-images',
+        resource_type: 'image'
+      });
+
+      const secure_url = uploadResult.secure_url;
+
+      // Save to database
+      await sql`INSERT INTO creations (user_id, prompt, content, type, publish) VALUES (${userId}, ${prompt}, ${secure_url}, 'image', ${publish ?? false})`;
+
+      res.json({
+        success: true,
+        message: "Image generated successfully",
+        content: secure_url,
+      });
+    } catch (imageError) {
+      console.error('Image generation error:', imageError);
+      return res.status(500).json({
+        success: false,
+        message: "Failed to generate image",
+        error: imageError.message
       });
     }
-
-    res.json({
-      success: true,
-      message: "Image generated successfully",
-      content,
-      prompt,
-      free_usage: !hasPremiumPlan ? free_usage + 1 : free_usage,
-    });
   } catch (error) {
-    console.error("Error in generateArticle:", error);
-    // Provide a proper status code
+    console.error("Error in generateImage:", error);
     const statusCode = error.status || 500;
     res.status(statusCode).json({
       message: error.message,

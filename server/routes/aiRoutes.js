@@ -9,6 +9,7 @@ aiRouter.use((req, res, next) => {
   console.log(`[DEBUG] AI Route: ${req.method} ${req.path}`);
   next();
 });
+
 aiRouter.post("/generate-article", auth, generateArticle);
 aiRouter.post("/generate-blog-title", auth, generateBlogTitle);
 aiRouter.post("/generate-image", auth, generateImage);
