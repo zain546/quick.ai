@@ -1,13 +1,20 @@
-// Middleware to check if user is authenticated and hasPremiumPlan
 import { clerkClient } from "@clerk/express";
+
+// Middleware to check if user is authenticated and hasPremiumPlan
 
 export const auth = async (req, res, next) => {
   try {
     const { userId, has } = await req.auth();
+
+    // Check if userId exists
+    if (!userId) {
+      return res.status(401).json({ message: "User ID not found" });
+    }
+
     const hasPremiumPlan = await has({ plan: "premium" });
 
     const user = await clerkClient.users.getUser(userId);
-    if (!hasPremiumPlan && user.publicMetadata.free_usage) {
+    if (!hasPremiumPlan && user.privateMetadata.free_usage) {
       req.free_usage = user.privateMetadata.free_usage;
     } else {
       await clerkClient.users.updateUserMetadata(userId, {
@@ -21,6 +28,6 @@ export const auth = async (req, res, next) => {
     next();
   } catch (error) {
     console.error(error);
-    res.status(error.status).json({ message: error.message });
+    res.json({ status: false, message: error.message });
   }
 };
