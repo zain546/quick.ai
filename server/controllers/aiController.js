@@ -3,6 +3,8 @@ import sql from "../configs/db.js";
 import { clerkClient } from "@clerk/express";
 import axios from "axios";
 import { v2 as cloudinary } from "cloudinary";
+import fs from "fs";
+import pdf from "pdf-parse/lib/pdf-parse.js";
 
 const AI = new OpenAI({
   apiKey: process.env.GEMINI_API_KEY,
@@ -305,15 +307,15 @@ export const removeImageObject = async (req, res) => {
   try {
     // Get authentication data using req.auth() since we're using requireAuth()
     const { userId } = await req.auth();
-    const { object } = req.body;
     if (!userId) {
       return res.status(401).json({ message: "User ID not found" });
     }
 
+    const { object } = req.body;
     const { image } = req.file;
-    if (!image) {
+    if (!image || !object) {
       return res.status(400).json({
-        message: "Image is required",
+        message: "Image and object are required",
       });
     }
 
@@ -363,6 +365,83 @@ export const removeImageObject = async (req, res) => {
     }
   } catch (error) {
     console.error("Error in removeImageObject:", error);
+    const statusCode = error.status || 500;
+    res.status(statusCode).json({
+      message: error.message,
+      error: error.toString(),
+    });
+  }
+};
+
+export const resumeReview = async (req, res) => {
+  try {
+    // Get authentication data using req.auth() since we're using requireAuth()
+    const { userId } = await req.auth();
+    if (!userId) {
+      return res.status(401).json({ message: "User ID not found" });
+    }
+
+    const resume = req.file;
+    if (!resume) {
+      return res.status(400).json({
+        message: "Resume is required",
+      });
+    }
+
+    // Check user's plan and usage
+    const plan = await req.plan;
+
+    if (plan !== "premium") {
+      return res.status(403).json({
+        success: false,
+        message:
+          "This feature is only available for premium users, upgrade to premium to continue",
+      });
+    }
+
+    try {
+      if (resume.size > 5 * 1024 * 1024) {
+        return res.status(400).json({
+          message: "Resume size must be less than 5MB",
+        });
+      }
+      //read pdf file
+      const dataBuffer = fs.readFileSync(resume.path);
+      //convert pdf to text
+      const pdfData = await pdf(dataBuffer);
+
+      const prompt = `
+        You are a resume reviewer.
+        Review the following resue and provide constructive feedback on it's strengths, weaknesses, and areas for improvement.
+        Resume content:\n\n${pdfData.text}
+        `;
+
+      const response = await AI.chat.completions.create({
+        model: "gemini-2.0-flash",
+        messages: [{ role: "user", content: prompt }],
+        temperature: 0.7,
+        max_tokens: 1000,
+      });
+      const content = response.choices[0].message.content;
+
+      // Save to database
+      await sql`INSERT INTO creations (user_id, prompt, content, type) VALUES (${userId}, 'Review the uploaded resume.', ${content}, 'resume-review')`;
+
+      res.json({
+        success: true,
+        message: "Resume reviewed successfully",
+        content,
+      });
+    } catch (imageError) {
+      console.error("Resume review error:", imageError);
+      return res.status(500).json({
+        success: false,
+        message: "Failed to review resume",
+        error: imageError.message,
+      });
+    }
+  } catch (error) {
+    console.error("Error in resumeReview:", error);
     const statusCode = error.status || 500;
     res.status(statusCode).json({
       message: error.message,
