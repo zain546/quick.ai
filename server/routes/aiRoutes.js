@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { generateArticle } from "../controllers/aiController.js";
+import { generateArticle, generateBlogTitle, generateImage } from "../controllers/aiController.js";
 import { auth } from "../middlewares/auth.js";
 
 const aiRouter = Router();
@@ -10,5 +10,7 @@ aiRouter.use((req, res, next) => {
   next();
 });
 aiRouter.post("/generate-article", auth, generateArticle);
+aiRouter.post("/generate-blog-title", auth, generateBlogTitle);
+aiRouter.post("/generate-image", auth, generateImage);
 
 export default aiRouter;
