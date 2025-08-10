@@ -300,3 +300,73 @@ export const removeImageBackground = async (req, res) => {
     });
   }
 };
+
+export const removeImageObject = async (req, res) => {
+  try {
+    // Get authentication data using req.auth() since we're using requireAuth()
+    const { userId } = await req.auth();
+    const { object } = req.body;
+    if (!userId) {
+      return res.status(401).json({ message: "User ID not found" });
+    }
+
+    const { image } = req.file;
+    if (!image) {
+      return res.status(400).json({
+        message: "Image is required",
+      });
+    }
+
+    // Check user's plan and usage
+    const plan = await req.plan;
+
+    if (plan !== "premium") {
+      return res.status(403).json({
+        success: false,
+        message:
+          "This feature is only available for premium users, upgrade to premium to continue",
+      });
+    }
+
+    try {
+      const uploadResult = await cloudinary.uploader.upload(image.path, {
+        folder: "removed-object-images",
+        resource_type: "image",
+      });
+
+      const public_id = uploadResult.public_id;
+
+      const imageUrl = cloudinary.url(public_id, {
+        transformation: [
+          {
+            effect: `gen_remove:${object}`,
+          },
+        ],
+        resource_type: "image",
+      });
+
+      // Save to database
+      await sql`INSERT INTO creations (user_id, prompt, content, type) VALUES (${userId}, ${`remove ${object} from image`}, ${imageUrl}, 'image')`;
+
+      res.json({
+        success: true,
+        message: "Image object removed successfully",
+        content: imageUrl,
+      });
+    } catch (imageError) {
+      console.error("Image object removal error:", imageError);
+      return res.status(500).json({
+        success: false,
+        message: "Failed to remove image object",
+        error: imageError.message,
+      });
+    }
+  } catch (error) {
+    console.error("Error in removeImageObject:", error);
+    const statusCode = error.status || 500;
+    res.status(statusCode).json({
+      message: error.message,
+      error: error.toString(),
+    });
+  }
+};
