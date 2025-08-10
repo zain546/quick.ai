@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Route, Routes } from "react-router-dom";
 import {
   Home,
@@ -12,8 +12,16 @@ import {
   ReviewResume,
   Community,
 } from "./pages";
+import { useAuth } from "@clerk/clerk-react";
 
 const App = () => {
+  const { getToken } = useAuth();
+  useEffect(() => {
+    getToken().then((token) => {
+      console.log('token', token);
+    });
+  }, []);
+
   return (
     <div>
       <Routes>
