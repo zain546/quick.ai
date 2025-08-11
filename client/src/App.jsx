@@ -13,15 +13,9 @@ import {
   Community,
 } from "./pages";
 import { useAuth } from "@clerk/clerk-react";
+import { Toaster } from "react-hot-toast";
 
 const App = () => {
-  const { getToken } = useAuth();
-  useEffect(() => {
-    getToken().then((token) => {
-      console.log('token', token);
-    });
-  }, []);
-
   return (
     <div>
       <Routes>
@@ -37,6 +31,7 @@ const App = () => {
           <Route path="community" element={<Community />} />
         </Route>
       </Routes>
+      <Toaster />
     </div>
   );
 };
