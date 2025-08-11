@@ -27,7 +27,7 @@ export const auth = async (req, res, next) => {
     req.plan = hasPremiumPlan ? "premium" : "free";
     next();
   } catch (error) {
-    console.error(error);
-    res.json({ status: false, message: error.message });
+    console.error("Auth middleware error:", error);
+    res.status(500).json({ status: false, message: error.message });
   }
 };

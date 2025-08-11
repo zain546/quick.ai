@@ -245,10 +245,11 @@ export const removeImageBackground = async (req, res) => {
       return res.status(401).json({ message: "User ID not found" });
     }
 
-    const { image } = req.file;
-    if (!image) {
+    // Check if file was uploaded
+    if (!req.file) {
       return res.status(400).json({
-        message: "Image is required",
+        success: false,
+        message: "Image file is required",
       });
     }
 
@@ -264,7 +265,7 @@ export const removeImageBackground = async (req, res) => {
     }
 
     try {
-      const uploadResult = await cloudinary.uploader.upload(image.path, {
+      const uploadResult = await cloudinary.uploader.upload(req.file.path, {
         transformation: [
           {
             effect: "background_removal",
@@ -297,6 +298,7 @@ export const removeImageBackground = async (req, res) => {
     console.error("Error in removeImageBackground:", error);
     const statusCode = error.status || 500;
     res.status(statusCode).json({
+      success: false,
       message: error.message,
       error: error.toString(),
     });
@@ -312,10 +314,17 @@ export const removeImageObject = async (req, res) => {
     }
 
     const { object } = req.body;
-    const { image } = req.file;
-    if (!image || !object) {
+    // Check if file was uploaded
+    if (!req.file) {
       return res.status(400).json({
-        message: "Image and object are required",
+        success: false,
+        message: "Image file is required",
+      });
+    }
+    if (!object) {
+      return res.status(400).json({
+        success: false,
+        message: "Object to remove is required",
       });
     }
 
@@ -331,7 +340,7 @@ export const removeImageObject = async (req, res) => {
     }
 
     try {
-      const uploadResult = await cloudinary.uploader.upload(image.path, {
+      const uploadResult = await cloudinary.uploader.upload(req.file.path, {
         folder: "removed-object-images",
         resource_type: "image",
       });
@@ -367,6 +376,7 @@ export const removeImageObject = async (req, res) => {
     console.error("Error in removeImageObject:", error);
     const statusCode = error.status || 500;
     res.status(statusCode).json({
+      success: false,
       message: error.message,
       error: error.toString(),
     });
