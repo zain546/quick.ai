@@ -5,10 +5,10 @@ import axios from "axios";
 import { Loader } from "lucide-react";
 import { toast } from "react-hot-toast";
 import Markdown from "react-markdown";
+import { config } from "../config/config.js";
 
-
-axios.defaults.baseURL = import.meta.env.VITE_BASE_URL;
-
+// Set axios base URL
+axios.defaults.baseURL = config.baseURL;
 
 const WriteArticle = () => {
   const articlelength = [
