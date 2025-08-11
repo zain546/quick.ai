@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { Route, Routes } from "react-router-dom";
 import {
   Home,
@@ -12,7 +12,6 @@ import {
   ReviewResume,
   Community,
 } from "./pages";
-import { useAuth } from "@clerk/clerk-react";
 import { Toaster } from "react-hot-toast";
 
 const App = () => {
