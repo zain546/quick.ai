@@ -31,40 +31,60 @@ const Testimonial = () => {
       rating: 4,
     },
   ];
+
   return (
-    <div className="px-4 sm:px-20 xl:px-32 py-24">
-      <div className="text-center">
-        <h2 className="text-slate-700 text-[42px] font-semibold">
+    <div className="px-4 sm:px-6 md:px-12 lg:px-20 xl:px-32 py-12 sm:py-16 md:py-20 lg:py-24">
+      {/* Header */}
+      <div className="text-center mb-8 sm:mb-12 md:mb-16 lg:mb-20">
+        <h2 className="text-slate-700 text-2xl sm:text-3xl md:text-4xl lg:text-[42px] font-semibold leading-tight">
           Loved by Creators
         </h2>
-        <p className="text-gray-500 max-w-lg mx-auto">
+        <p className="text-gray-500 max-w-sm sm:max-w-md lg:max-w-lg mx-auto mt-3 sm:mt-4 text-sm sm:text-base">
           Don't just take our word for it. Here's what our users are saying.
         </p>
       </div>
-      <div className="flex flex-wrap mt-10 justify-center">
+
+      {/* Testimonials Grid */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 md:gap-8 lg:gap-10 justify-items-center">
         {dummyTestimonialData.map((testimonial, index) => (
           <div
             key={index}
-            className="p-8 m-4 max-w-xs rounded-lg bg-[#FDFDFE] shadow-lg border border-gray-100 hover:-translate-y-1 transition duration-300 cursor-pointer"
+            className="w-full max-w-xs sm:max-w-sm p-4 sm:p-6 md:p-8 rounded-xl bg-[#FDFDFE] shadow-lg border border-gray-100 hover:-translate-y-1 transition-all duration-300 cursor-pointer hover:shadow-xl"
           >
-            <div className="flex items-center gap-1">
-            {Array(5).fill(0).map((_, index) => (
-                <img key={index} src={index< testimonial.rating ? assets.star_icon : assets.star_dull_icon} className="w-4 h-4" alt="stars"/>
-            ))}
+            {/* Rating Stars */}
+            <div className="flex items-center gap-1 mb-3 sm:mb-4 md:mb-5">
+              {Array(5).fill(0).map((_, index) => (
+                <img 
+                  key={index} 
+                  src={index < testimonial.rating ? assets.star_icon : assets.star_dull_icon} 
+                  className="w-4 h-4 sm:w-5 sm:h-5" 
+                  alt="stars"
+                />
+              ))}
             </div>
-            <p className="text-gray-500 text-sm my-5">
+
+            {/* Content */}
+            <p className="text-gray-500 text-sm sm:text-base my-3 sm:my-4 md:my-5 leading-relaxed">
               "{testimonial.content}"
             </p>
-            <hr className="mb-5 border-gray-300" />
-            <div className="flex items-center gap-4">
+
+            {/* Divider */}
+            <hr className="mb-3 sm:mb-4 md:mb-5 border-gray-300" />
+
+            {/* Author Info */}
+            <div className="flex items-center gap-3 sm:gap-4">
               <img
                 src={testimonial.image}
-                className="w-12 object-contain rounded-full"
-                alt=""
+                className="w-10 h-10 sm:w-12 sm:h-12 object-cover rounded-full border-2 border-gray-200"
+                alt={testimonial.name}
               />
-              <div className="text-sm text-gray-600">
-                <h3 className="font-medium">{testimonial.name}</h3>
-                <p className="text-xs text-gray-500">{testimonial.title}</p>
+              <div className="min-w-0 flex-1">
+                <h3 className="font-medium text-sm sm:text-base text-gray-800 truncate">
+                  {testimonial.name}
+                </h3>
+                <p className="text-xs sm:text-sm text-gray-500 truncate">
+                  {testimonial.title}
+                </p>
               </div>
             </div>
           </div>
