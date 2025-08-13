@@ -9,7 +9,13 @@ import userRouter from "./routes/userRoutes.js";
 const app = express();
 
 // Connect to Cloudinary
-connectCloudinary();
+
+try {
+  connectCloudinary();
+  console.log("Cloudinary connected successfully");
+} catch (error) {
+  console.error("Cloudinary connection failed:", error);
+}
 
 app.use(cors());
 app.use(express.json());
