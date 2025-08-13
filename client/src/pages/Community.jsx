@@ -143,9 +143,9 @@ const Community = () => {
   }
 
   return (
-    <div className="flex-1 h-full flex flex-col gap-4 p-6">
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-gray-800">
+    <div className="flex-1 h-full flex flex-col gap-4 p-4 sm:p-6">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+        <h1 className="text-xl sm:text-2xl font-bold text-gray-800">
           Community Creations
         </h1>
         <p className="text-sm text-gray-600">
