@@ -9,7 +9,7 @@ const Hero = () => {
     <div className="px-4 sm:px-6 md:px-12 lg:px-20 xl:px-32 relative inline-flex flex-col w-full justify-center bg-[url(/gradientBackground.png)] bg-cover bg-center bg-no-repeat min-h-[80vh] sm:min-h-screen pt-16 sm:pt-0">
       {/* Hero Content */}
       <div className="text-center mb-4 sm:mb-6 md:mb-8 lg:mb-10">
-        <h1 className="text-2xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-semibold mx-auto leading-tight sm:leading-[1.1] md:leading-[1.2] px-2">
+        <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-semibold mx-auto leading-tight sm:leading-[1.1] md:leading-[1.2] px-2">
           Create amazing content <br className="hidden sm:block" />
           with <span className="text-primary">AI tools</span>
         </h1>
