@@ -30,9 +30,10 @@ const Sidebar = ({ sidebar, setSidebar }) => {
 
   return (
     <div
-      className={`w-60 bg-white border-r border-gray-200 flex flex-col justify-between items-center max-sm:absolute top-14 bottom-0 ${
+      className={`w-60 bg-white border-r border-gray-200 flex flex-col justify-between items-center max-sm:absolute top-14 bottom-0 z-[9999] shadow-2xl ${
         sidebar ? "translate-x-0" : "max-sm:-translate-x-full"
       } transition-all duration-300 ease-in-out`}
+      style={{ zIndex: 9999 }}
     >
       <div className="my-7 w-full">
         <img
@@ -42,12 +43,15 @@ const Sidebar = ({ sidebar, setSidebar }) => {
         />
         <h1 className="text-center mt-1">{user.fullName}</h1>
         <div className="mt-5 px-5 text-sm text-gray-600 font-medium">
+          {/* eslint-disable-next-line no-unused-vars */}
           {navItems.map(({ to, label, Icon }) => (
             <NavLink
               key={to}
               to={to}
-              end={to == "/ai"}
-              onclick={() => setSidebar(false)}
+              end={to === "/ai"}
+              onClick={() => {
+                setSidebar(false);
+              }}
               className={({ isActive }) =>
                 `flex items-center gap-3 py-2.5 px-3.5 rounded ${
                   isActive
@@ -80,7 +84,7 @@ const Sidebar = ({ sidebar, setSidebar }) => {
             <h1 className="font-medium text-sm">{user.fullName}</h1>
             <p className="text-xs text-gray-500">
               <Protect plan="premium" fallback="Free">
-                Premuim
+                Premium
               </Protect>{" "}
               plan
             </p>

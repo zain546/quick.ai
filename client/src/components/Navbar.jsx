@@ -21,7 +21,7 @@ items-center py-3 px-4 sm:px-20 x1l:px-32"
       /> */}
 
       <h2
-        className="text-xl font-bold flex items-center gap-1 cursor-pointer sm:text-2xl"
+        className="text-2xl font-bold flex items-center gap-1 cursor-pointer sm:text-3xl"
         onClick={() => navigate("/")}
       >
         {/* icon */}
@@ -35,10 +35,11 @@ items-center py-3 px-4 sm:px-20 x1l:px-32"
         <UserButton />
       ) : (
         <button
-          className="flex items-center gap-2 rounded-full text-sm cursor-pointer bg-primary text-white px-10 py-2.5"
+          className="flex items-center gap-2 rounded-full text-sm cursor-pointer bg-primary text-white px-5 sm:px-10 sm:py-2.5 py-2"
           onClick={openSignIn}
         >
-          Get started
+          <p className="inline sm:hidden">Start</p>
+          <p className="hidden sm:inline">Get started</p>
           <ArrowRight className="w-4 h-4" />
         </button>
       )}

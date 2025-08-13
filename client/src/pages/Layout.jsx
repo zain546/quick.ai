@@ -1,10 +1,8 @@
-import React, { useState } from "react";
-import { Outlet } from "react-router-dom";
-import { assets } from "../assets/assets";
-import { useNavigate } from "react-router-dom";
-import { Menu, Sparkles, X } from "lucide-react";
-import Sidebar from "../components/Sidebar";
 import { SignIn, useUser } from "@clerk/clerk-react";
+import { Menu, Sparkles, X } from "lucide-react";
+import React, { useState } from "react";
+import { Outlet, useNavigate } from "react-router-dom";
+import Sidebar from "../components/Sidebar";
 
 const Layout = () => {
   const navigate = useNavigate();
@@ -20,7 +18,7 @@ const Layout = () => {
           onClick={() => navigate("/")}
         /> */}
         <h2
-          className="text-xl font-bold flex items-center gap-1 cursor-pointer sm:text-2xl"
+          className="text-2xl font-bold flex items-center gap-1 cursor-pointer sm:text-3xl"
           onClick={() => navigate("/")}
         >
           {/* icon */}
@@ -43,7 +41,7 @@ const Layout = () => {
         )}
       </nav>
       <div className="flex w-full flex-1 h-[calc(100vh-64px)]">
-        <Sidebar sidebar={sidebar} setSidebar={setSidebar} />
+        <Sidebar sidebar={sidebar} setSidebar={setSidebar}  />
         <div className="flex-1 bg-[#F4F7FB]">
           <Outlet />
         </div>
