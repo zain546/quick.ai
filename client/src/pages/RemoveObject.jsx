@@ -137,12 +137,9 @@ const RemoveObject = () => {
                 <span>✨</span>
               </div>
               <div className="flex justify-center items-center gap-2">
-                <p className="text-sm font-semibold text-emerald-800">
-                  Premium User
+                <p className="text-xs font-medium text-emerald-800">
+                  Premium User - Remove any object from images with precision!
                 </p>
-                <span className="text-xs text-emerald-700">
-                  Remove any object from images with precision!
-                </span>
               </div>
             </div>
           </div>

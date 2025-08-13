@@ -123,12 +123,9 @@ const RemoveBackground = () => {
                 <span>✨</span>
               </div>
               <div className="flex justify-center items-center gap-2">
-                <p className="text-sm font-semibold text-emerald-800">
-                  Premium User
+                <p className="text-xs font-medium text-emerald-800">
+                  Premium User - Enjoy unlimited background removal!
                 </p>
-                <span className="text-xs text-emerald-700">
-                  Enjoy unlimited background removal!
-                </span>
               </div>
             </div>
           </div>

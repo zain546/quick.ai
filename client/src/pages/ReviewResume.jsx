@@ -132,12 +132,9 @@ const ReviewResume = () => {
                 <span>✨</span>
               </div>
               <div className="flex justify-center items-center gap-2">
-                <p className="text-sm font-semibold text-emerald-800">
-                  Premium User
+                <p className="text-xs font-medium text-emerald-800">
+                  Premium User - Get professional resume feedback and insights!
                 </p>
-                <span className="text-xs text-emerald-700">
-                  Get professional resume feedback and insights!
-                </span>
               </div>
             </div>
           </div>
