@@ -3,7 +3,7 @@ import { PricingTable } from "@clerk/clerk-react";
 
 const Plan = () => {
   return (
-    <div className="max-w-2xl mx-auto z-20 my-12 sm:my-16 md:my-20 lg:my-30 px-4 sm:px-6">
+    <div className="max-w-6xl mx-auto z-20 my-12 sm:my-16 md:my-20 lg:my-30 px-4 sm:px-6">
       {/* Header */}
       <div className="text-center mb-8 sm:mb-12 md:mb-16 lg:mb-20">
         <h2 className="text-slate-700 text-2xl sm:text-3xl md:text-4xl lg:text-[42px] font-semibold leading-tight">
@@ -15,9 +15,18 @@ const Plan = () => {
         </p>
       </div>
 
-      {/* Pricing Table */}
+      {/* Pricing Table - Force Row Layout on Desktop */}
       <div className="mt-8 sm:mt-10 md:mt-12 lg:mt-14">
-        <PricingTable />
+        <div className="flex flex-col lg:flex-row lg:justify-center lg:items-start lg:gap-6">
+          <PricingTable 
+            appearance={{
+              elements: {
+                rootBox: "w-1/2 lg:w-auto lg:flex-1",
+                pricingCard: "lg:min-w-0"
+              }
+            }}
+          />
+        </div>
       </div>
     </div>
   );

@@ -19,7 +19,7 @@ const CompanyLogoMarquee = () => {
   ];
 
   return (
-    <div className="overflow-hidden w-full relative max-w-5xl mx-auto select-none top-20">
+    <div className="overflow-hidden w-full relative max-w-5xl mx-auto select-none top-10">
       {/* Left gradient */}
       <div className="absolute left-0 top-0 h-full w-20 z-10 pointer-events-none bg-gradient-to-r from-[#ffffff] to-transparent"></div>
 
